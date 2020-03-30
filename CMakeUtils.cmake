@@ -60,12 +60,18 @@ function(file_generate_rc inpath outpath rcname)
 endfunction()
 
 # generate file resouce if needed
+# accepts optional last argument to determine if null 
+# should be appended to the buffer
 function(file_intern filePath resName resOutPath)
 	get_filename_component(fileName "${filePath}" NAME)
 	set(outputFile "${CMAKE_CURRENT_BINARY_DIR}/${fileName}.c")
 	file_was_changed("${filePath}" wasChanged)
 	if ("${wasChanged}" STREQUAL "1")
-		file_generate_rc(${filePath} ${outputFile} ${resName} 1)
+		if (${ARGN})
+			file_generate_rc(${filePath} ${outputFile} ${resName} 1)
+		else()
+			file_generate_rc(${filePath} ${outputFile} ${resName} 0)
+		endif()
 	endif()
 	set("${resOutPath}" "${outputFile}" PARENT_SCOPE)
 endfunction()
